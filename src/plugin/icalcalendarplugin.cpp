@@ -50,7 +50,7 @@ ICalCalendarPlugin::ICalCalendarPlugin(QObject *parent)
     connect(m_secrets, &SecretStore::secretsReady, this, &ICalCalendarPlugin::onSecretsReady);
     connect(m_secrets, &SecretStore::availableChanged, this, [](bool available, const QString &reason) {
         if (!available) {
-            qWarning("iCal Calendar: private iCal URLs are unavailable: %s", qPrintable(reason));
+            qWarning("iCal Calendar: feed addresses are unavailable: %s", qPrintable(reason));
         }
     });
 

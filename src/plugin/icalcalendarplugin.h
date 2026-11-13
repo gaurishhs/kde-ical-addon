@@ -24,7 +24,7 @@ class QNetworkAccessManager;
 class QTimer;
 
 /*!
- * Plasma calendar plugin backed by private iCal feeds.
+ * Plasma calendar plugin backed by private or public iCal feeds.
  *
  * The plugin never talks to a provider API and never needs Akonadi.
  * Each configured calendar is downloaded as a plain .ics document, parsed with

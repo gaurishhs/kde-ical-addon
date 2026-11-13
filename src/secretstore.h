@@ -17,11 +17,11 @@ class Wallet;
 }
 
 /*!
- * Storage for the private iCal URLs.
+ * Storage for iCal feed addresses (private or public).
  *
- * The URLs are bearer secrets: anybody who has one can read the calendar, so
- * they are kept in KWallet rather than in a plain config file, they are never
- * written to logs, and they are never put in error messages.
+ * A private feed URL is a bearer secret: anybody who has one can read the
+ * calendar. Addresses are therefore kept in KWallet rather than in a plain
+ * config file, are never written to logs, and never appear in error messages.
  *
  * Everything here is asynchronous; opening the wallet can involve a user
  * prompt and must never block the caller (which, inside plasmashell, is the

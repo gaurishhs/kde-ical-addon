@@ -11,7 +11,7 @@
 #include <QVector>
 
 /*!
- * One configured calendar. The private iCal URL is deliberately *not* in here:
+ * One configured calendar. The feed URL is deliberately *not* in here:
  * it lives in KWallet and is addressed by \c id.
  */
 struct CalendarSource {

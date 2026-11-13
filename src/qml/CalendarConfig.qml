@@ -201,7 +201,7 @@ KCM.SimpleKCM {
                             QQC2.TextField {
                                 id: addressField
                                 Layout.fillWidth: true
-                                placeholderText: i18n("Paste the private iCal address (https://…/basic.ics)")
+                                placeholderText: i18n("Paste the iCal address (https://…/basic.ics)")
                                 echoMode: TextInput.Password
                                 inputMethodHints: Qt.ImhUrlCharactersOnly | Qt.ImhNoPredictiveText | Qt.ImhSensitiveData
                                 onAccepted: saveAddress()

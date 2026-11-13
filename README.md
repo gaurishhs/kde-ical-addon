@@ -1,104 +1,168 @@
-# KDE iCal Calendar Plugin
+# iCal Calendar for KDE Plasma 6
 
-A standalone KDE Plasma 6 plugin that shows events from **private iCal feeds** directly in the native Digital Clock popup — no OAuth, no Akonadi, no system-wide install.
+A standalone calendar plugin for the native **Digital Clock** popup. It shows
+events from any **private or public iCal/ICS feed** — no OAuth, no Akonadi, no
+background daemon, and no system-wide install.
 
-## How It Works
+## Features
 
-- Accepts one or more private or public iCal URLs (the calendar's secret/private iCal address, i.e. its `.ics` URL).
-- Downloads each feed asynchronously using Qt Network; never blocks the UI.
-- Parses `.ics` with libical — handles recurrence, all-day events, timezone conversion, EXDATE overrides, cancellations, and modifications.
-- Caches feeds locally (`~/.cache/icalcalendar/`) for offline use; refreshes on interval with ETag/Last-Modified conditional requests.
-- Stores private URLs only in KWallet (never in config files or logs).
+- One or more `.ics` feeds, public or private, from any calendar provider.
+- Asynchronous downloads and `libical` parsing: recurrence, all-day events,
+  time zones, `EXDATE` exceptions, cancellations and modifications.
+- Works offline from the last cached copy.
+- Conditional refresh using `ETag` / `Last-Modified` (no full re-download when
+  nothing changed).
+- Feed addresses are stored in **KWallet**, never in the config file or logs.
+- Read-only: it never creates, edits or deletes events.
 
-## Dependencies
+## Requirements
 
-System packages (one-time):
+Build:
+
+- CMake ≥ 3.22, a C++17 compiler and Extra CMake Modules
+- Qt 6: Core, Gui, Network, Qml, Concurrent
+- KF6: KDeclarative (CalendarEvents API) and Wallet
+- libical
+
+Fedora:
 
 ```bash
-sudo dnf install libical-devel kf6-kwallet-devel \
+sudo dnf install cmake gcc-c++ extra-cmake-modules \
   qt6-qtbase-devel qt6-qtdeclarative-devel \
-  extra-cmake-modules kf6-kcoreaddons-devel kf6-kwallet-devel \
-  kf6-kcalcore-devel kf6-ki18n-devel kirigami-devel kcmutils-devel
+  kf6-kdeclarative-devel kf6-kwallet-devel libical-devel
 ```
 
-No other external dependencies are needed at build time.
+Runtime: Plasma 6 with the Digital Clock applet, KWallet (`kwalletd6`),
+Kirigami, KCMUtils and `tzdata` (all normally present with Plasma).
 
-## Quick Start (build with local devroot shim)
-
-If you cannot or do not want to install system packages, this repo can be built against a small devroot in `/tmp/devroot`:
+## Quick start
 
 ```bash
-# Set up the shim once (requires root)
-sudo mkdir -p /tmp/devroot/usr/lib64/cmake/LibIcal \
-              /tmp/devroot/usr/lib64/cmake/KF6Wallet
-# Copy the system cmake configs there and fix paths (see scripts/setup_devroot.sh)
+# 1. Build and test
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j"$(nproc)"
+ctest --test-dir build --output-on-failure
 
-# Build
-cmake -B build -DCMAKE_PREFIX_PATH=/tmp/devroot/usr -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j$(nproc)
-ctest --test-dir build                # all unit tests
-
-# Install into ~/.local
+# 2. Install for the current user (no sudo)
 ./install.sh
 ```
 
-## Manual Install
+`install.sh` builds, installs into `~/.local`, writes
+`~/.config/environment.d/20-kde-ical-plugin.conf` so Qt finds the plugin and
+QML module, and restarts `plasma-plasmashell.service`.
+
+### Enable it
+
+1. Right-click the **Digital Clock** → **Configure Digital Clock…**
+2. **Appearance → Calendar plugins** (older Plasma versions: **Calendar**)
+3. Move **iCal Calendar** to the enabled list and click **Apply**
+
+### Add a feed
+
+1. Open the clock popup → calendar section → **Configure** next to *iCal Calendar*
+2. Paste the calendar's private or public `.ics` address
+3. Press **Save** (Enter also works)
+
+The first fetch populates the cache; the popup then renders from cache while
+refreshing in the background.
+
+### Uninstall
 
 ```bash
-# After building
-mkdir -p ~/.local/lib64/qt6/plugins/plasmacalendarplugins/icalcalendar
-mkdir -p ~/.local/lib64/qt6/qml/org/kde/plasma/icalcalendar
-
-cp build/plasmacalendarplugins/icalcalendar.so \
-   ~/.local/lib64/qt6/plugins/plasmacalendarplugins/
-cp src/qml/CalendarConfig.qml \
-   ~/.local/lib64/qt6/plugins/plasmacalendarplugins/icalcalendar/ICalCalendarConfig.qml
-cp build/qml/org/kde/plasma/icalcalendar/libicalcalendarsettings.so \
-   ~/.local/lib64/qt6/qml/org/kde/plasma/icalcalendar/
-cp build/qml/org/kde/plasma/icalcalendar/qmldir \
-   ~/.local/lib64/qt6/qml/org/kde/plasma/icalcalendar/
-
-# Tell systemd user to pick them up
-mkdir -p ~/.config/environment.d
-cat > ~/.config/environment.d/20-kde-ical-plugin.conf <<'EOF'
-QT_PLUGIN_PATH=${HOME}/.local/lib64/qt6/plugins
-QML_IMPORT_PATH=${HOME}/.local/lib64/qt6/qml
-EOF
-
-systemctl --user daemon-reload
-systemctl --user restart plasma-plasmashell
+./uninstall.sh
 ```
 
-## Using the Plugin
+This removes the installed plugin, QML module and environment file and
+restarts plasmashell. Your config (`~/.config/icalcalendarrc`) and feed cache
+(`~/.cache/icalcalendar/`) are left behind; delete them if you want a clean
+state.
 
-1. Open the **Digital Clock** applet.
-2. Right‑click → **Configure Digital Clock** → **Appearance** → **Calendar plugins**.
-3. Move **iCal Calendar** to the enabled list and click **Apply**.
-4. Click the clock, open the calendar section, click the **Configure** button next to iCal Calendar.
-5. Add a calendar by pasting its private or public iCal address (the `.ics` URL).
+## Private and public feeds
 
-## Architecture
+- **Public** feeds (holidays, sports, community calendars, …) work as-is; the
+  addon performs a plain HTTPS GET with no credentials.
+- **Private** feeds (tokenized URLs) work too. Treat the URL as a secret: it is
+  the only authentication. It is stored in KWallet and never shown again.
+- Only `https://` is accepted (loopback `http://` is allowed for tests).
+  `webcal://` and plain `http://` are rejected — replace `webcal://` with
+  `https://`.
+- Feeds that require an `Authorization` header, cookies or an interactive login
+  are not supported; only URLs whose token is embedded in the address work.
+- The plugin is read-only.
+
+## Caching and refresh
+
+- Each calendar has two files in `~/.cache/icalcalendar/`:
+  - `<calendar-id>.ics` — the last downloaded feed body
+  - `<calendar-id>.json` — `ETag`, `Last-Modified`, fetch time, and a SHA-256
+    hash of the URL (the URL itself is never written)
+- On startup, or when an address is set, the cached `.ics` is parsed
+  immediately, so the popup is never blank and works offline.
+- The refresh timer (default **15 minutes**, configurable in the settings page)
+  issues a conditional GET:
+  - **304 Not Modified** → reuse the cached body without reparsing
+  - **200 OK** → save atomically (`QSaveFile`), update the validators, reparse
+  - **error** → keep using the cached copy; the error is logged without the URL
+- Opening the clock popup also refreshes any feed whose last successful fetch is
+  older than the configured interval.
+- Changing an address invalidates the stored body and validators (the URL hash
+  no longer matches) and forces a fresh download.
+- Responses larger than 32 MB are aborted. Redirects are followed only if they
+  do not downgrade security (no `https` → `http`).
+- The cache directory is owner-only (`0700`). Parsed events for the requested
+  month are kept in memory; parsing runs on a single worker thread because
+  libical's time-zone state is not fully thread-safe.
+- Removing a calendar deletes its KWallet entry. Its cached `.ics`/`.json`
+  files may remain on disk and are ignored.
+
+## Development
+
+```bash
+./install.sh                 # build + install + restart
+ctest --test-dir build       # unit tests
+```
+
+### Using a devroot instead of system development packages
+
+If `libical-devel` and/or `kf6-kwallet-devel` are unavailable, point CMake at
+a prefix containing their headers and CMake configs (for example a local shim
+in `/tmp/devroot/usr`):
+
+```bash
+cmake -B build -DCMAKE_PREFIX_PATH=/tmp/devroot/usr -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j"$(nproc)"
+```
+
+The prefix must provide `LibIcalConfig.cmake` and `KF6WalletConfig.cmake`.
+`/tmp` may be cleared on reboot; re-create the shim or install the packages.
+
+### Build outputs
+
+- `build/plasmacalendarplugins/icalcalendar.so` — the calendar plugin
+- `build/qml/org/kde/plasma/icalcalendar/libicalcalendarsettings.so` — config-page backend
+- `build/ical_parser_test`, `build/feed_test`, `build/config_settings_test`
+
+### Architecture
 
 | Component | Purpose |
 |-----------|---------|
-| `src/types.{h,cpp}` | Shared types (`Calendar`, `Event`, `FeedCache`) |
-| `src/icalparser.{h,cpp}` | Parse `.ics` → `Calendar` objects via libical |
-| `src/settings.{h,cpp}` | Read/write config JSON + KWallet access |
-| `src/secretstore.{h,cpp}` | Wrap KWallet async read/write calls |
-| `src/feedfetcher.{h,cpp}` | Async HTTP with ETag/Last‑Modified + cache |
-| `src/plugin/icalcalendarplugin.{h,cpp,json}` | Implements `CalendarEventsPlugin` |
-| `src/qml/{calendarsettings,calendarlistmodel}.{h,cpp}, qmlplugin.cpp` | Config‑page backend & QML module |
-| `tests/{ical_parser_test,feed_test,config_settings_test}.cpp` | Unit tests (all pass) |
+| `src/types.{h,cpp}` | `CalendarSource`, `Occurrence` and date helpers |
+| `src/icalparser.{h,cpp}` | `.ics` → `Occurrence` list via libical |
+| `src/settings.{h,cpp}` | INI config, paths and refresh clamp |
+| `src/secretstore.{h,cpp}` | Async KWallet read/write wrapper |
+| `src/feedfetcher.{h,cpp}` | Async HTTP, conditional GET, on-disk cache |
+| `src/plugin/icalcalendarplugin.{h,cpp,json}` | `CalendarEventsPlugin` implementation |
+| `src/qml/*` | Config-page backend and QML module |
+| `tests/*.cpp` | Parser, feed and config unit tests |
 
-### Build Outputs
+## Limitations
 
-- `build/plasmacalendarplugins/icalcalendar.so` — the discovered plugin
-- `build/qml/org/kde/plasma/icalcalendar/libicalcalendarsettings.so` — QML module
-- `build/*.so` and test binaries
-
-## Limitations & Known Issues
-
-- Requires libical and KF6::Wallet. If not available on your distro, use the devroot shim.
-- Only supports *private* iCal links — public/shared calendars with `public-XXXX` URLs are rejected by design (no authentication means no security boundary).
-- The config page opens inside the Digital Clock settings dialog; it does not launch System Settings.
-- Timezone correctness depends on the `tzdata` package being present on the host (standard on all Linux distros).
+- Requires libical and `KF6::Wallet`; on distros without the development
+  packages use the devroot prefix described above.
+- The config page opens inside the Digital Clock settings dialog; it does not
+  launch System Settings.
+- Time-zone correctness depends on `tzdata` being present (standard on Linux).
+- KWallet must be available and unlocked: feed addresses live there, so without
+  it no feed can be loaded.
+- Event changes appear after the next refresh, the next popup open, or when the
+  settings are applied.

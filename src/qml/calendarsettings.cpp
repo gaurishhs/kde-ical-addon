@@ -41,7 +41,7 @@ CalendarSettings::CalendarSettings(QObject *parent)
     });
     connect(m_secrets, &SecretStore::availableChanged, this, [this](bool available, const QString &reason) {
         m_walletAvailable = available;
-        m_walletStatus = available ? QStringLiteral("Private addresses are stored in KWallet.") : reason;
+        m_walletStatus = available ? QStringLiteral("Feed addresses are stored in KWallet.") : reason;
         Q_EMIT walletStatusChanged();
     });
 

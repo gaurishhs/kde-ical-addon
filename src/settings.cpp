@@ -72,7 +72,7 @@ QString Settings::cacheDir()
     }
     const QString dir = base + QStringLiteral("/icalcalendar");
     QDir().mkpath(dir);
-    // The cached feed is private calendar data; keep it owner-only.
+    // The cached feed is calendar data; keep the directory owner-only.
     QFile::setPermissions(dir, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
     return dir;
 }

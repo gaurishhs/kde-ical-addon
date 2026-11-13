@@ -61,7 +61,7 @@ public Q_SLOTS:
     void setEnabled(const QString &id, bool enabled);
     void setColor(const QString &id, const QString &color);
 
-    /*! Validates and stores a private iCal URL in KWallet. Never returns the URL. */
+    /*! Validates and stores an iCal feed address in KWallet. Never returns the URL. */
     bool setUrl(const QString &id, const QString &url);
     void clearUrl(const QString &id);
 

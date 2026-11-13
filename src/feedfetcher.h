@@ -20,7 +20,7 @@ class QNetworkReply;
  * Responsibilities:
  *  - conditional GET using ETag / Last-Modified (RFC 9110)
  *  - store the body plus validators on disk
- *  - never log the URL, which is a bearer secret
+ *  - never log the URL: it may be a bearer secret
  *
  * All network work is asynchronous; nothing here blocks.
  */

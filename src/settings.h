@@ -14,7 +14,7 @@
 /*!
  * Persisted configuration, stored as an INI file in the user's config dir.
  *
- * Private iCal URLs are *not* stored here; each calendar only records an id
+ * Feed addresses are *not* stored here; each calendar only records an id
  * which is used as the KWallet entry key. See SecretStore.
  */
 class Settings

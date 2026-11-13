@@ -16,7 +16,7 @@
 /*!
  * The calendar list shown in the configuration page.
  *
- * The private iCal URL is never part of this model; only whether an address is
+ * The feed address is never part of this model; only whether an address is
  * stored (UrlSetRole) is exposed, so a QML binding can never leak it.
  */
 class CalendarListModel : public QAbstractListModel
