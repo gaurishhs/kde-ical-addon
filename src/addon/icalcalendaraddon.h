@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -24,9 +24,9 @@ class QNetworkAccessManager;
 class QTimer;
 
 /*!
- * Plasma calendar plugin backed by private or public iCal feeds.
+ * Plasma calendar addon backed by private or public iCal feeds.
  *
- * The plugin never talks to a provider API and never needs Akonadi.
+ * The addon never talks to a provider API and never needs Akonadi.
  * Each configured calendar is downloaded as a plain .ics document, parsed with
  * libical on a worker thread, and turned into Plasma's EventData.
  *
@@ -36,15 +36,15 @@ class QTimer;
  *  - libical parsing runs on a dedicated single-thread pool (libical keeps
  *    process-wide state, so one parser thread is both safe and enough).
  */
-class ICalCalendarPlugin : public CalendarEvents::CalendarEventsPlugin
+class ICalCalendarAddon : public CalendarEvents::CalendarEventsPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.kde.CalendarEventsPlugin" FILE "icalcalendar.json")
+    Q_PLUGIN_METADATA(IID "org.kde.CalendarEventsPlugin" FILE "icalcalendaraddon.json")
     Q_INTERFACES(CalendarEvents::CalendarEventsPlugin)
 
 public:
-    explicit ICalCalendarPlugin(QObject *parent = nullptr);
-    ~ICalCalendarPlugin() override;
+    explicit ICalCalendarAddon(QObject *parent = nullptr);
+    ~ICalCalendarAddon() override;
 
     void loadEventsForDateRange(const QDate &startDate, const QDate &endDate) override;
 

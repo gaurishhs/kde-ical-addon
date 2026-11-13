@@ -1,6 +1,6 @@
-# iCal Calendar for KDE Plasma 6
+# iCal Calendar Addon for KDE Plasma 6
 
-A standalone calendar plugin for the native **Digital Clock** popup. It shows
+A standalone calendar addon for the native **Digital Clock** popup. It shows
 events from any **private or public iCal/ICS feed** — no OAuth, no Akonadi, no
 background daemon, and no system-wide install.
 
@@ -48,8 +48,10 @@ ctest --test-dir build --output-on-failure
 ```
 
 `install.sh` builds, installs into `~/.local`, writes
-`~/.config/environment.d/20-kde-ical-plugin.conf` so Qt finds the plugin and
-QML module, and restarts `plasma-plasmashell.service`.
+`~/.config/environment.d/20-kde-ical-addon.conf` so Qt finds the addon and
+QML module, and restarts `plasma-plasmashell.service`. It deliberately does
+**not** modify your Digital Clock configuration — enabling the addon is left
+to you, as described below.
 
 ### Enable it
 
@@ -72,7 +74,7 @@ refreshing in the background.
 ./uninstall.sh
 ```
 
-This removes the installed plugin, QML module and environment file and
+This removes the installed addon, QML module and environment file and
 restarts plasmashell. Your config (`~/.config/icalcalendarrc`) and feed cache
 (`~/.cache/icalcalendar/`) are left behind; delete them if you want a clean
 state.
@@ -88,7 +90,7 @@ state.
   `https://`.
 - Feeds that require an `Authorization` header, cookies or an interactive login
   are not supported; only URLs whose token is embedded in the address work.
-- The plugin is read-only.
+- The addon is read-only.
 
 ## Caching and refresh
 
@@ -138,7 +140,7 @@ The prefix must provide `LibIcalConfig.cmake` and `KF6WalletConfig.cmake`.
 
 ### Build outputs
 
-- `build/plasmacalendarplugins/icalcalendar.so` — the calendar plugin
+- `build/plasmacalendarplugins/icalcalendar.so` — the calendar addon
 - `build/qml/org/kde/plasma/icalcalendar/libicalcalendarsettings.so` — config-page backend
 - `build/ical_parser_test`, `build/feed_test`, `build/config_settings_test`
 
@@ -151,7 +153,7 @@ The prefix must provide `LibIcalConfig.cmake` and `KF6WalletConfig.cmake`.
 | `src/settings.{h,cpp}` | INI config, paths and refresh clamp |
 | `src/secretstore.{h,cpp}` | Async KWallet read/write wrapper |
 | `src/feedfetcher.{h,cpp}` | Async HTTP, conditional GET, on-disk cache |
-| `src/plugin/icalcalendarplugin.{h,cpp,json}` | `CalendarEventsPlugin` implementation |
+| `src/addon/icalcalendaraddon.{h,cpp,json}` | `CalendarEventsPlugin` implementation |
 | `src/qml/*` | Config-page backend and QML module |
 | `tests/*.cpp` | Parser, feed and config unit tests |
 

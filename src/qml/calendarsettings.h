@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -15,13 +15,13 @@ class CalendarListModel;
 class SecretStore;
 
 /*!
- * QML-facing configuration object for the plugin's page in the Digital Clock
+ * QML-facing configuration object for the addon's page in the Digital Clock
  * settings.
  *
  * The page runs in the configuration dialog, which is a different process
- * object from the plugin instance, so it writes the same config file
+ * object from the addon instance, so it writes the same config file
  * (~/.config/icalcalendarrc) and the same KWallet entries. The running
- * plugin watches the config file and reloads automatically.
+ * addon watches the config file and reloads automatically.
  *
  * Secret handling: the URL never leaves this object once stored. It is not a
  * Q_PROPERTY, it is not returned by any invokable, and it is never logged.
@@ -65,7 +65,7 @@ public Q_SLOTS:
     bool setUrl(const QString &id, const QString &url);
     void clearUrl(const QString &id);
 
-    /*! Writes the configuration file; the running plugin picks it up by itself. */
+    /*! Writes the configuration file; the running addon picks it up by itself. */
     void saveConfig();
 
     /*! Discards unsaved edits and reloads from disk + KWallet. */

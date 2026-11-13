@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -15,7 +15,7 @@
 /*!
  * Turns an iCalendar (RFC 5545) feed into concrete occurrences for a date range.
  *
- * All the libical handling lives here so that the rest of the plugin never has
+ * All the libical handling lives here so that the rest of the addon never has
  * to touch C structures. parse() is pure and thread-safe: it takes the raw feed
  * bytes and returns plain Qt value types, so it can run on a worker thread.
  */

@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -11,7 +11,7 @@
 
 namespace
 {
-/*! KWallet folder holding this plugin's entries. */
+/*! KWallet folder holding this addon's entries. */
 const QString kFolder = QStringLiteral("icalcalendar");
 
 /*!
@@ -55,7 +55,7 @@ void SecretStore::ensureOpen()
     m_openRequested = true;
 
     // Asynchronous: never blocks, and walletOpened() arrives via the event
-    // loop. WId 0 because the plugin has no window of its own.
+    // loop. WId 0 because the addon has no window of its own.
     KWallet::Wallet *wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), 0, KWallet::Wallet::Asynchronous);
     if (!wallet) {
         m_openRequested = false;

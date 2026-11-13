@@ -1,9 +1,9 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-#include "icalcalendarplugin.h"
+#include "icalcalendaraddon.h"
 
 #include "feedfetcher.h"
 #include "icalparser.h"
@@ -28,14 +28,14 @@
 namespace
 {
 /*! Prefix for every uid handed to Plasma, so we never collide with another
- *  calendar plugin (the API asks plugins to do this). */
+ *  calendar addon (the API asks add-ons to do this). */
 const QString kUidPrefix = QStringLiteral("icalcalendar-");
 const QString kDemoUidPrefix = QStringLiteral("icalcalendar-demo-");
 
 constexpr int kConfigDebounceMs = 400;
 } // namespace
 
-ICalCalendarPlugin::ICalCalendarPlugin(QObject *parent)
+ICalCalendarAddon::ICalCalendarAddon(QObject *parent)
     : CalendarEvents::CalendarEventsPlugin(parent)
     , m_network(new QNetworkAccessManager(this))
     , m_secrets(new SecretStore(this))
@@ -47,7 +47,7 @@ ICalCalendarPlugin::ICalCalendarPlugin(QObject *parent)
     // and parsing a month of events is cheap; one worker is plenty.
     m_parsePool.setMaxThreadCount(1);
 
-    connect(m_secrets, &SecretStore::secretsReady, this, &ICalCalendarPlugin::onSecretsReady);
+    connect(m_secrets, &SecretStore::secretsReady, this, &ICalCalendarAddon::onSecretsReady);
     connect(m_secrets, &SecretStore::availableChanged, this, [](bool available, const QString &reason) {
         if (!available) {
             qWarning("iCal Calendar: feed addresses are unavailable: %s", qPrintable(reason));
@@ -55,11 +55,11 @@ ICalCalendarPlugin::ICalCalendarPlugin(QObject *parent)
     });
 
     m_refreshTimer->setTimerType(Qt::VeryCoarseTimer);
-    connect(m_refreshTimer, &QTimer::timeout, this, &ICalCalendarPlugin::refreshAll);
+    connect(m_refreshTimer, &QTimer::timeout, this, &ICalCalendarAddon::refreshAll);
 
     m_configDebounce->setSingleShot(true);
     m_configDebounce->setInterval(kConfigDebounceMs);
-    connect(m_configDebounce, &QTimer::timeout, this, &ICalCalendarPlugin::reloadSettings);
+    connect(m_configDebounce, &QTimer::timeout, this, &ICalCalendarAddon::reloadSettings);
 
     // The configuration file is replaced atomically by QSettings, so the file
     // watch can stop after a save; the directory watch keeps us informed and
@@ -77,13 +77,13 @@ ICalCalendarPlugin::ICalCalendarPlugin(QObject *parent)
     reloadSettings();
 }
 
-ICalCalendarPlugin::~ICalCalendarPlugin()
+ICalCalendarAddon::~ICalCalendarAddon()
 {
     // Wait for any in-flight parse before members disappear.
     m_parsePool.waitForDone();
 }
 
-void ICalCalendarPlugin::installConfigWatch()
+void ICalCalendarAddon::installConfigWatch()
 {
     const QString path = Settings::configFilePath();
     const QString directory = QFileInfo(path).absolutePath();
@@ -97,7 +97,7 @@ void ICalCalendarPlugin::installConfigWatch()
     }
 }
 
-void ICalCalendarPlugin::reloadSettings()
+void ICalCalendarAddon::reloadSettings()
 {
     const Settings::Snapshot snapshot = Settings::load();
     const bool changed = !m_settingsLoaded || snapshot != m_settings;
@@ -172,7 +172,7 @@ void ICalCalendarPlugin::reloadSettings()
     emitMap(m_settings.demoMode ? buildDemoMap() : buildMap(), false);
 }
 
-void ICalCalendarPlugin::requestSecrets()
+void ICalCalendarAddon::requestSecrets()
 {
     QStringList ids;
     ids.reserve(m_calendars.size());
@@ -182,7 +182,7 @@ void ICalCalendarPlugin::requestSecrets()
     m_secrets->request(ids);
 }
 
-void ICalCalendarPlugin::onSecretsReady(const QHash<QString, QString> &urls)
+void ICalCalendarAddon::onSecretsReady(const QHash<QString, QString> &urls)
 {
     bool changed = false;
 
@@ -221,13 +221,13 @@ void ICalCalendarPlugin::onSecretsReady(const QHash<QString, QString> &urls)
     }
 }
 
-void ICalCalendarPlugin::restartRefreshTimer()
+void ICalCalendarAddon::restartRefreshTimer()
 {
     const int minutes = Settings::clampRefreshMinutes(m_settings.refreshMinutes);
     m_refreshTimer->start(minutes * 60 * 1000);
 }
 
-void ICalCalendarPlugin::refreshAll()
+void ICalCalendarAddon::refreshAll()
 {
     if (m_settings.demoMode) {
         return;
@@ -239,7 +239,7 @@ void ICalCalendarPlugin::refreshAll()
     }
 }
 
-void ICalCalendarPlugin::onFetched(const QString &id, const QByteArray &data)
+void ICalCalendarAddon::onFetched(const QString &id, const QByteArray &data)
 {
     auto it = m_calendars.find(id);
     if (it == m_calendars.end() || data.isEmpty()) {
@@ -251,7 +251,7 @@ void ICalCalendarPlugin::onFetched(const QString &id, const QByteArray &data)
     scheduleParse(id);
 }
 
-void ICalCalendarPlugin::onFetchFailed(const QString &id, const QString &message)
+void ICalCalendarAddon::onFetchFailed(const QString &id, const QString &message)
 {
     auto it = m_calendars.find(id);
     if (it == m_calendars.end()) {
@@ -266,7 +266,7 @@ void ICalCalendarPlugin::onFetchFailed(const QString &id, const QString &message
     // Keep showing the cached copy, if any.
 }
 
-void ICalCalendarPlugin::scheduleParse(const QString &id)
+void ICalCalendarAddon::scheduleParse(const QString &id)
 {
     auto it = m_calendars.find(id);
     if (it == m_calendars.end() || !it->haveFeed || !m_haveRange) {
@@ -322,7 +322,7 @@ void ICalCalendarPlugin::scheduleParse(const QString &id)
     }));
 }
 
-CalendarEvents::EventData ICalCalendarPlugin::makeEventData(const Occurrence &occurrence, const CalendarState &state) const
+CalendarEvents::EventData ICalCalendarAddon::makeEventData(const Occurrence &occurrence, const CalendarState &state) const
 {
     CalendarEvents::EventData data;
     data.setUid(kUidPrefix + state.source.id + QLatin1Char('-') + occurrence.uid);
@@ -352,7 +352,7 @@ CalendarEvents::EventData ICalCalendarPlugin::makeEventData(const Occurrence &oc
     return data;
 }
 
-QMultiHash<QDate, CalendarEvents::EventData> ICalCalendarPlugin::buildMap() const
+QMultiHash<QDate, CalendarEvents::EventData> ICalCalendarAddon::buildMap() const
 {
     QMultiHash<QDate, CalendarEvents::EventData> map;
     if (!m_haveRange) {
@@ -384,7 +384,7 @@ QMultiHash<QDate, CalendarEvents::EventData> ICalCalendarPlugin::buildMap() cons
     return map;
 }
 
-QMultiHash<QDate, CalendarEvents::EventData> ICalCalendarPlugin::buildDemoMap() const
+QMultiHash<QDate, CalendarEvents::EventData> ICalCalendarAddon::buildDemoMap() const
 {
     QMultiHash<QDate, CalendarEvents::EventData> map;
     if (!m_haveRange) {
@@ -480,7 +480,7 @@ QMultiHash<QDate, CalendarEvents::EventData> ICalCalendarPlugin::buildDemoMap() 
     return map;
 }
 
-QString ICalCalendarPlugin::signatureFor(const QVector<EmittedItem> &items)
+QString ICalCalendarAddon::signatureFor(const QVector<EmittedItem> &items)
 {
     QStringList parts;
     parts.reserve(items.size());
@@ -502,7 +502,7 @@ QString ICalCalendarPlugin::signatureFor(const QVector<EmittedItem> &items)
     return parts.join(QLatin1Char('\n'));
 }
 
-void ICalCalendarPlugin::emitMap(const QMultiHash<QDate, CalendarEvents::EventData> &map, bool fullReplace)
+void ICalCalendarAddon::emitMap(const QMultiHash<QDate, CalendarEvents::EventData> &map, bool fullReplace)
 {
     QHash<QString, QVector<EmittedItem>> grouped;
     for (auto it = map.cbegin(); it != map.cend(); ++it) {
@@ -562,7 +562,7 @@ void ICalCalendarPlugin::emitMap(const QMultiHash<QDate, CalendarEvents::EventDa
     }
 }
 
-void ICalCalendarPlugin::loadEventsForDateRange(const QDate &startDate, const QDate &endDate)
+void ICalCalendarAddon::loadEventsForDateRange(const QDate &startDate, const QDate &endDate)
 {
     m_rangeStart = startDate;
     m_rangeEnd = endDate;

@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -24,7 +24,7 @@ public:
         QVector<CalendarSource> calendars;
         int refreshMinutes = 15;
         bool demoMode = false;
-        /*! Bumped on every save so the plugin can cheaply detect changes. */
+        /*! Bumped on every save so the addon can cheaply detect changes. */
         qint64 revision = 0;
 
         bool operator==(const Snapshot &other) const;

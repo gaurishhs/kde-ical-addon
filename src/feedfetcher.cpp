@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -168,7 +168,7 @@ void FeedFetcher::fetch()
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     request.setTransferTimeout(kTransferTimeoutMs);
     request.setHeader(QNetworkRequest::UserAgentHeader,
-                      QStringLiteral("PlasmaICalCalendar/2.0 (KDE Plasma calendar plugin)"));
+                      QStringLiteral("PlasmaICalCalendar/2.0 (KDE Plasma calendar addon)"));
     if (!m_etag.isEmpty()) {
         request.setRawHeader("If-None-Match", m_etag.toUtf8());
     }

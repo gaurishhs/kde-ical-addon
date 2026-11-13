@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+# SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set -euo pipefail
 
-PLUGIN_SO="$HOME/.local/lib64/qt6/plugins/plasmacalendarplugins/icalcalendar.so"
-PLUGIN_DIR="$HOME/.local/lib64/qt6/plugins/plasmacalendarplugins/icalcalendar"
+ADDON_SO="$HOME/.local/lib64/qt6/plugins/plasmacalendarplugins/icalcalendar.so"
+ADDON_DIR="$HOME/.local/lib64/qt6/plugins/plasmacalendarplugins/icalcalendar"
 QML_DIR="$HOME/.local/lib64/qt6/qml/org/kde/plasma/icalcalendar"
-ENV_FILE="$HOME/.config/environment.d/20-kde-ical-plugin.conf"
+ENV_FILE="$HOME/.config/environment.d/20-kde-ical-addon.conf"
 
-echo "=== Uninstalling KDE iCal Calendar Plugin ==="
+echo "=== Uninstalling KDE iCal Calendar Addon ==="
 
-rm -f "$PLUGIN_SO"
-rm -rf "$PLUGIN_DIR"
+rm -f "$ADDON_SO"
+rm -rf "$ADDON_DIR"
 rm -rf "$QML_DIR"
 rm -f "$ENV_FILE"
 

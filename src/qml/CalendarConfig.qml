@@ -1,10 +1,10 @@
 /*
-    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar addon authors
     SPDX-License-Identifier: GPL-2.0-or-later
 
-    Configuration page shown by the Digital Clock applet for this plugin.
+    Configuration page shown by the Digital Clock applet for this addon.
 
-    It follows the same contract as the upstream calendar plugins:
+    It follows the same contract as the upstream calendar add-ons:
       - signal configurationChanged
       - property unsavedChanges
       - function saveConfig()

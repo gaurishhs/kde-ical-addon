@@ -41,9 +41,9 @@ add_library(icalcalendar_core STATIC
 )
 set_target_properties(icalcalendar_core PROPERTIES
     POSITION_INDEPENDENT_CODE ON
-    # This static core is embedded in both plugin DSOs; hidden visibility
+    # This static core is embedded in both add-on DSOs; hidden visibility
     # prevents them from exporting/interposing the same symbols, which
-    # caused crashes during plugin unload.
+    # caused crashes during unload.
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN ON
 )
@@ -57,7 +57,7 @@ target_link_libraries(icalcalendar_core
 )
 
 # ---------------------------------------------------------------------------
-# The Plasma calendar plugin.
+# The Plasma calendar addon.
 #
 # Deliberately a MODULE library named "icalcalendar" with no "lib" prefix:
 # KPluginMetaData derives the plugin id from the file name, and
@@ -67,9 +67,9 @@ target_link_libraries(icalcalendar_core
 #   <plugindir>/plasmacalendarplugins/icalcalendar.so
 # ---------------------------------------------------------------------------
 add_library(icalcalendar MODULE
-    src/plugin/icalcalendarplugin.h
-    src/plugin/icalcalendarplugin.cpp
-    src/plugin/icalcalendar.json
+    src/addon/icalcalendaraddon.h
+    src/addon/icalcalendaraddon.cpp
+    src/addon/icalcalendaraddon.json
 )
 target_link_libraries(icalcalendar
     PRIVATE
@@ -100,13 +100,13 @@ install(FILES src/qml/CalendarConfig.qml
 # ---------------------------------------------------------------------------
 # User-local QML module backing the config page.
 #
-# The page needs C++ (KWallet access and the config file), and the plugin
+# The page needs C++ (KWallet access and the config file), and the addon
 # object itself is private to EventPluginsManager, so the sanctioned approach
 # is a separate QML module: the .so keeps the default "lib" prefix because
 # that is what QQmlExtensionPlugin looks for.
 # ---------------------------------------------------------------------------
 add_library(icalcalendarsettings MODULE
-    src/qml/qmlplugin.cpp
+    src/qml/qmlextension.cpp
     src/qml/calendarlistmodel.h
     src/qml/calendarlistmodel.cpp
     src/qml/calendarsettings.h
