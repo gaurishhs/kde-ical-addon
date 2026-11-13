@@ -138,25 +138,6 @@ cmake --build build -j"$(nproc)"
 The prefix must provide `LibIcalConfig.cmake` and `KF6WalletConfig.cmake`.
 `/tmp` may be cleared on reboot; re-create the shim or install the packages.
 
-### Build outputs
-
-- `build/plasmacalendarplugins/icalcalendar.so` — the calendar addon
-- `build/qml/org/kde/plasma/icalcalendar/libicalcalendarsettings.so` — config-page backend
-- `build/ical_parser_test`, `build/feed_test`, `build/config_settings_test`
-
-### Architecture
-
-| Component | Purpose |
-|-----------|---------|
-| `src/types.{h,cpp}` | `CalendarSource`, `Occurrence` and date helpers |
-| `src/icalparser.{h,cpp}` | `.ics` → `Occurrence` list via libical |
-| `src/settings.{h,cpp}` | INI config, paths and refresh clamp |
-| `src/secretstore.{h,cpp}` | Async KWallet read/write wrapper |
-| `src/feedfetcher.{h,cpp}` | Async HTTP, conditional GET, on-disk cache |
-| `src/addon/icalcalendaraddon.{h,cpp,json}` | `CalendarEventsPlugin` implementation |
-| `src/qml/*` | Config-page backend and QML module |
-| `tests/*.cpp` | Parser, feed and config unit tests |
-
 ## Limitations
 
 - Requires libical and `KF6::Wallet`; on distros without the development
