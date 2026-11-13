@@ -1,0 +1,4 @@
+ical_parser_test 4 0.00569029
+feed_test 3 0.00758562
+config_settings_test 4 0.00372583
+---

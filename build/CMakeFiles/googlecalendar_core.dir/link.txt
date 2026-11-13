@@ -1,0 +1,2 @@
+/usr/bin/ar qc libgooglecalendar_core.a CMakeFiles/googlecalendar_core.dir/googlecalendar_core_autogen/mocs_compilation.cpp.o CMakeFiles/googlecalendar_core.dir/src/types.cpp.o CMakeFiles/googlecalendar_core.dir/src/icalparser.cpp.o CMakeFiles/googlecalendar_core.dir/src/settings.cpp.o CMakeFiles/googlecalendar_core.dir/src/secretstore.cpp.o CMakeFiles/googlecalendar_core.dir/src/feedfetcher.cpp.o
+/usr/bin/ranlib libgooglecalendar_core.a

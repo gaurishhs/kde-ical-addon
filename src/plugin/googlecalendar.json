@@ -1,0 +1,16 @@
+{
+    "KPlugin": {
+        "Name": "Google Calendar (iCal)",
+        "Description": "Show events from private Google Calendar iCal feeds",
+        "Icon": "view-calendar",
+        "Version": "2.0.0",
+        "License": "GPL-2.0-or-later",
+        "Authors": [
+            {
+                "Name": "Google Calendar Plasma plugin authors",
+                "Email": "you@example.org"
+            }
+        ]
+    },
+    "X-KDE-PlasmaCalendar-ConfigUi": "googlecalendar/GoogleCalendarConfig.qml"
+}

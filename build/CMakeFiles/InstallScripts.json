@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/gaurish/projects/kde-gcal-plugin/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

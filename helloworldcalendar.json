@@ -1,0 +1,15 @@
+{
+    "KPlugin": {
+        "Name": "Hello World Calendar",
+        "Description": "Minimal hardcoded calendar events for testing the Plasma calendar plugin system",
+        "Icon": "view-calendar",
+        "Version": "1.0.0",
+        "License": "GPL-2.0-or-later",
+        "Authors": [
+            {
+                "Name": "Hello World Calendar Plugin authors",
+                "Email": "you@example.org"
+            }
+        ]
+    }
+}
