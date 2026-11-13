@@ -1,0 +1,7 @@
+# Build output
+build/
+
+# Editor/backup files
+*~
+*.bak
+*.orig

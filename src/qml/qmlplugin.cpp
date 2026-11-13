@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 Google Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -10,7 +10,7 @@
 #include <QQmlExtensionPlugin>
 #include <QUrl>
 
-class GoogleCalendarQmlPlugin : public QQmlExtensionPlugin
+class ICalCalendarQmlPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)

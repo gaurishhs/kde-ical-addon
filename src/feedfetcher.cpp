@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 Google Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -20,7 +20,7 @@
 namespace
 {
 constexpr int kTransferTimeoutMs = 30000;
-/*! Refuse absurd bodies; a month-rich Google feed is well under 10 MB. */
+/*! Refuse absurd bodies; a month-rich iCal feed is well under 10 MB. */
 constexpr qint64 kMaxBodyBytes = 32 * 1024 * 1024;
 } // namespace
 
@@ -32,6 +32,7 @@ FeedFetcher::FeedFetcher(QNetworkAccessManager *network, QString calendarId, QOb
 }
 
 FeedFetcher::~FeedFetcher() = default;
+
 
 bool FeedFetcher::isAllowedUrl(const QUrl &url)
 {
@@ -167,7 +168,7 @@ void FeedFetcher::fetch()
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     request.setTransferTimeout(kTransferTimeoutMs);
     request.setHeader(QNetworkRequest::UserAgentHeader,
-                      QStringLiteral("PlasmaGoogleCalendar/2.0 (KDE Plasma calendar plugin)"));
+                      QStringLiteral("PlasmaICalCalendar/2.0 (KDE Plasma calendar plugin)"));
     if (!m_etag.isEmpty()) {
         request.setRawHeader("If-None-Match", m_etag.toUtf8());
     }

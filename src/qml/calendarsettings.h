@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 Google Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -20,7 +20,7 @@ class SecretStore;
  *
  * The page runs in the configuration dialog, which is a different process
  * object from the plugin instance, so it writes the same config file
- * (~/.config/googlecalendarrc) and the same KWallet entries. The running
+ * (~/.config/icalcalendarrc) and the same KWallet entries. The running
  * plugin watches the config file and reloads automatically.
  *
  * Secret handling: the URL never leaves this object once stored. It is not a

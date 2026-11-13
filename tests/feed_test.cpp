@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 Google Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
     SPDX-License-Identifier: GPL-2.0-or-later
 
     FeedFetcher tests: conditional requests, offline cache and URL policy.
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
 
     QNetworkAccessManager network;
 
-    check(FeedFetcher::isAllowedUrl(QUrl(QStringLiteral("https://calendar.google.com/x/basic.ics"))),
+    check(FeedFetcher::isAllowedUrl(QUrl(QStringLiteral("https://example.com/x/basic.ics"))),
           QStringLiteral("https URLs are allowed"));
     check(FeedFetcher::isAllowedUrl(QUrl(base)), QStringLiteral("loopback http is allowed for tests"));
     check(!FeedFetcher::isAllowedUrl(QUrl(QStringLiteral("http://example.com/x.ics"))),

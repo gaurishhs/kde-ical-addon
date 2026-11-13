@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(googlecalendar VERSION 2.0.0 LANGUAGES CXX)
+project(icalcalendar VERSION 2.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,12 +23,11 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Network Qml Concurrent)
 find_package(KF6Declarative 6.27 REQUIRED COMPONENTS CalendarEvents)
 find_package(KF6Wallet REQUIRED)
 find_package(LibIcal REQUIRED)
-find_package(KF6CoreAddons REQUIRED) # only for the discovery test
 
 # ---------------------------------------------------------------------------
 # Shared, non-UI code: settings, secret storage, feed fetching, iCalendar.
 # ---------------------------------------------------------------------------
-add_library(googlecalendar_core STATIC
+add_library(icalcalendar_core STATIC
     src/types.h
     src/types.cpp
     src/icalparser.h
@@ -40,9 +39,16 @@ add_library(googlecalendar_core STATIC
     src/feedfetcher.h
     src/feedfetcher.cpp
 )
-set_target_properties(googlecalendar_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_include_directories(googlecalendar_core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_link_libraries(googlecalendar_core
+set_target_properties(icalcalendar_core PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+    # This static core is embedded in both plugin DSOs; hidden visibility
+    # prevents them from exporting/interposing the same symbols, which
+    # caused crashes during plugin unload.
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+)
+target_include_directories(icalcalendar_core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(icalcalendar_core
     PUBLIC
         Qt6::Core
         Qt6::Network
@@ -53,40 +59,42 @@ target_link_libraries(googlecalendar_core
 # ---------------------------------------------------------------------------
 # The Plasma calendar plugin.
 #
-# Deliberately a MODULE library named "googlecalendar" with no "lib" prefix:
+# Deliberately a MODULE library named "icalcalendar" with no "lib" prefix:
 # KPluginMetaData derives the plugin id from the file name, and
 # EventPluginsManager loads plugins with
 #   QPluginLoader("plasmacalendarplugins/" + pluginId)
 # so the installed file must be
-#   <plugindir>/plasmacalendarplugins/googlecalendar.so
+#   <plugindir>/plasmacalendarplugins/icalcalendar.so
 # ---------------------------------------------------------------------------
-add_library(googlecalendar MODULE
-    src/plugin/googlecalendarplugin.h
-    src/plugin/googlecalendarplugin.cpp
-    src/plugin/googlecalendar.json
+add_library(icalcalendar MODULE
+    src/plugin/icalcalendarplugin.h
+    src/plugin/icalcalendarplugin.cpp
+    src/plugin/icalcalendar.json
 )
-target_link_libraries(googlecalendar
+target_link_libraries(icalcalendar
     PRIVATE
-        googlecalendar_core
+        icalcalendar_core
         Qt6::Core
         Qt6::Concurrent
         KF6::CalendarEvents
 )
-set_target_properties(googlecalendar PROPERTIES
+set_target_properties(icalcalendar PROPERTIES
     PREFIX ""
-    OUTPUT_NAME "googlecalendar"
+    OUTPUT_NAME "icalcalendar"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plasmacalendarplugins"
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
 )
 
-install(TARGETS googlecalendar
+install(TARGETS icalcalendar
     LIBRARY DESTINATION "${KDE_INSTALL_PLUGINDIR}/plasmacalendarplugins"
 )
 
-# The metadata points at "googlecalendar/GoogleCalendarConfig.qml"; Plasma
+# The metadata points at "icalcalendar/ICalCalendarConfig.qml"; Plasma
 # resolves that relative to the directory containing the .so.
 install(FILES src/qml/CalendarConfig.qml
-    RENAME GoogleCalendarConfig.qml
-    DESTINATION "${KDE_INSTALL_PLUGINDIR}/plasmacalendarplugins/googlecalendar"
+    RENAME ICalCalendarConfig.qml
+    DESTINATION "${KDE_INSTALL_PLUGINDIR}/plasmacalendarplugins/icalcalendar"
 )
 
 # ---------------------------------------------------------------------------
@@ -97,35 +105,37 @@ install(FILES src/qml/CalendarConfig.qml
 # is a separate QML module: the .so keeps the default "lib" prefix because
 # that is what QQmlExtensionPlugin looks for.
 # ---------------------------------------------------------------------------
-add_library(googlecalendarsettings MODULE
+add_library(icalcalendarsettings MODULE
     src/qml/qmlplugin.cpp
     src/qml/calendarlistmodel.h
     src/qml/calendarlistmodel.cpp
     src/qml/calendarsettings.h
     src/qml/calendarsettings.cpp
 )
-target_link_libraries(googlecalendarsettings
+target_link_libraries(icalcalendarsettings
     PRIVATE
-        googlecalendar_core
+        icalcalendar_core
         Qt6::Core
         Qt6::Gui
         Qt6::Qml
 )
-set_target_properties(googlecalendarsettings PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml/org/kde/plasma/googlecalendar"
+set_target_properties(icalcalendarsettings PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml/org/kde/plasma/icalcalendar"
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
 )
 
-set(GOOGLECALENDAR_QML_DIR "${CMAKE_BINARY_DIR}/qml/org/kde/plasma/googlecalendar")
-file(WRITE "${GOOGLECALENDAR_QML_DIR}/qmldir"
-"module org.kde.plasma.googlecalendar
-plugin googlecalendarsettings
+set(ICALCALENDAR_QML_DIR "${CMAKE_BINARY_DIR}/qml/org/kde/plasma/icalcalendar")
+file(WRITE "${ICALCALENDAR_QML_DIR}/qmldir"
+"module org.kde.plasma.icalcalendar
+plugin icalcalendarsettings
 ")
 
-install(TARGETS googlecalendarsettings
-    LIBRARY DESTINATION "${KDE_INSTALL_QMLDIR}/org/kde/plasma/googlecalendar"
+install(TARGETS icalcalendarsettings
+    LIBRARY DESTINATION "${KDE_INSTALL_QMLDIR}/org/kde/plasma/icalcalendar"
 )
-install(FILES "${GOOGLECALENDAR_QML_DIR}/qmldir"
-    DESTINATION "${KDE_INSTALL_QMLDIR}/org/kde/plasma/googlecalendar"
+install(FILES "${ICALCALENDAR_QML_DIR}/qmldir"
+    DESTINATION "${KDE_INSTALL_QMLDIR}/org/kde/plasma/icalcalendar"
 )
 
 # ---------------------------------------------------------------------------
@@ -136,11 +146,11 @@ if(BUILD_TESTS)
     enable_testing()
 
     add_executable(ical_parser_test tests/ical_parser_test.cpp)
-    target_link_libraries(ical_parser_test PRIVATE googlecalendar_core Qt6::Core)
+    target_link_libraries(ical_parser_test PRIVATE icalcalendar_core Qt6::Core)
     add_test(NAME ical_parser_test COMMAND ical_parser_test)
 
     add_executable(feed_test tests/feed_test.cpp)
-    target_link_libraries(feed_test PRIVATE googlecalendar_core Qt6::Core Qt6::Network)
+    target_link_libraries(feed_test PRIVATE icalcalendar_core Qt6::Core Qt6::Network)
     add_test(NAME feed_test COMMAND feed_test)
 
     add_executable(config_settings_test
@@ -150,20 +160,11 @@ if(BUILD_TESTS)
     target_include_directories(config_settings_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/qml")
     target_link_libraries(config_settings_test
         PRIVATE
-            googlecalendar_core
+            icalcalendar_core
             Qt6::Core
     )
     add_test(NAME config_settings_test COMMAND config_settings_test)
-
-    # Reproduces exactly what Plasma does to discover and load the plugin.
-    add_executable(plugin_discover tests/plugin_discover.cpp)
-    target_link_libraries(plugin_discover
-        PRIVATE
-            Qt6::Core
-            KF6::CalendarEvents
-            KF6::CoreAddons
-    )
 endif()
 
 message(STATUS "Plugin install dir: ${KDE_INSTALL_PLUGINDIR}/plasmacalendarplugins")
-message(STATUS "QML module install dir: ${KDE_INSTALL_QMLDIR}/org/kde/plasma/googlecalendar")
+message(STATUS "QML module install dir: ${KDE_INSTALL_QMLDIR}/org/kde/plasma/icalcalendar")

@@ -1,0 +1,16 @@
+{
+    "KPlugin": {
+        "Name": "iCal Calendar",
+        "Description": "Show events from private iCal feeds",
+        "Icon": "view-calendar",
+        "Version": "2.0.0",
+        "License": "GPL-2.0-or-later",
+        "Authors": [
+            {
+                "Name": "iCal Calendar Plasma plugin authors",
+                "Email": "you@example.org"
+            }
+        ]
+    },
+    "X-KDE-PlasmaCalendar-ConfigUi": "icalcalendar/ICalCalendarConfig.qml"
+}

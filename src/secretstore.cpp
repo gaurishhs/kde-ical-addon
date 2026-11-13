@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 Google Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -12,7 +12,7 @@
 namespace
 {
 /*! KWallet folder holding this plugin's entries. */
-const QString kFolder = QStringLiteral("googlecalendar");
+const QString kFolder = QStringLiteral("icalcalendar");
 
 /*!
  * Diagnostics must never contain the secret itself, so nothing derived from a

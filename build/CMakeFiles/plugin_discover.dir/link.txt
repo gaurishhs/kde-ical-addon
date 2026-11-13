@@ -1,1 +1,0 @@
-/usr/bin/c++ -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/plugin_discover.dir/link.d CMakeFiles/plugin_discover.dir/plugin_discover_autogen/mocs_compilation.cpp.o CMakeFiles/plugin_discover.dir/tests/plugin_discover.cpp.o -o plugin_discover  /usr/lib64/libKF6CalendarEvents.so.6.31.0 /usr/lib64/libKF6CoreAddons.so.6.31.0 /usr/lib64/libQt6Core.so.6.11.2

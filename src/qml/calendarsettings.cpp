@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 Google Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -224,7 +224,7 @@ bool CalendarSettings::setUrl(const QString &id, const QString &url)
 
     const QUrl parsed(trimmed);
     if (!FeedFetcher::isAllowedUrl(parsed)) {
-        Q_EMIT error(QStringLiteral("Enter the private iCal address exactly as Google shows it "
+        Q_EMIT error(QStringLiteral("Enter the iCal address exactly as your calendar provider shows it "
                                     "(it starts with https://)."));
         return false;
     }

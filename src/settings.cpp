@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2026 Google Calendar Plasma plugin authors
+    SPDX-FileCopyrightText: 2026 iCal Calendar Plasma plugin authors
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
@@ -61,7 +61,7 @@ int Settings::Snapshot::enabledCount() const
 QString Settings::configFilePath()
 {
     return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-        + QStringLiteral("/googlecalendarrc");
+        + QStringLiteral("/icalcalendarrc");
 }
 
 QString Settings::cacheDir()
@@ -70,7 +70,7 @@ QString Settings::cacheDir()
     if (base.isEmpty()) {
         base = QDir::homePath() + QStringLiteral("/.cache");
     }
-    const QString dir = base + QStringLiteral("/googlecalendar");
+    const QString dir = base + QStringLiteral("/icalcalendar");
     QDir().mkpath(dir);
     // The cached feed is private calendar data; keep it owner-only.
     QFile::setPermissions(dir, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
